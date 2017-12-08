@@ -13,8 +13,6 @@ class TonylitspiderSpider(scrapy.Spider):
     allowed_domains = ['tonylit.me']
     
     baseURL = "http://tonylit.me/"
-    #页码
-    offset = 2
     #从此url开始爬取
     start_urls = ['http://tonylit.me/']
 
@@ -55,11 +53,11 @@ class TonylitspiderSpider(scrapy.Spider):
 	except :
 		print "error"
 	else:
-		#取前11页，进行翻页处理
-		if self.offset < 11:
-			self.offset += 1
-			nextURL = 'http://tonylit.me/page/'+str(self.offset) 
-		
+		#进行翻页处理
+		nextPage = response.xpath("//a[@class='extend next']/@href").extract()[0].encode("utf-8")
+		if  len(nextPage) != 0:
+			nextURL = 'http://tonylit.me/'+ str(nextPage) 
+			print nextURL	
 			#递归调用parse
 			yield scrapy.Request(nextURL,callback = self.parse)
 
